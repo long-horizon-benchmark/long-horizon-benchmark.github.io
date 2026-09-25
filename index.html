@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>LADDER: A Long-Horizon Robot Manipulation Benchmark</title>
+  <link rel="stylesheet" href="./static/fonts/fonts.css">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">LADDER: A Long-Horizon Robot Manipulation Benchmark</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Anonymous Authors</span>
+          </div>
+          <div class="is-size-6 publication-authors">
+            <span class="author-block">Paper under double-blind review at ICLR 2027</span>
+          </div>
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block"><a href="https://github.com/long-horizon-benchmark/ladder" class="external-link button is-normal is-rounded is-dark">
+                <span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img class="figure" src="static/images/teaser.png" alt="Overview of our benchmark and key findings">
+      <h2 class="subtitle has-text-centered"><b>Overview of our benchmark and key findings.</b> Across all suites, orchestrating policy execution with sequential subgoal decomposition and visual verification substantially outperforms issuing the full instruction directly to the policy (bottom right). See Tables&nbsp;1 and&nbsp;3.</h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified"><p>General-purpose robot manipulation policies learn short-horizon skills effectively, but degrade rapidly on long-horizon tasks. Existing benchmarks cannot isolate failures because task horizon is either too short or entangled with scene and object variations. We propose LADDER, a long-horizon robot manipulation benchmark scaling from 1 to 10 subgoals within the same environment over three suites (SimplerEnv-Long, RobotArena-&infin;-Long, and RoboLab-Long), 145 tasks, eight categories, two embodiments, and 2,024 simulated episodes per system. We evaluate two orchestration paradigms: text subgoals for learned low-level policies (VoLo) and tool selection orchestration (CaP-X, GPT-Policy, PSP-Agent, TiPToP). Given the full instruction directly, low-level policies achieve 85.4% on single-subgoal tasks, but drop to near zero on extended tasks. While orchestration remedies this, it remains bounded by physical execution errors of the low-level policy rather than high-level planning and achieves only &sim;25%. Tool selection orchestration with GPT-Policy on GPT-6 Astra significantly outperforms learned-policy methods, but incurs significant time and cost budget and succeeds only &sim;62%. Real-world experiments across two embodiments confirm the collapse of the low-level policy and the gain from orchestration. Project website: <a href="https://long-horizon-benchmark.github.io">long-horizon-benchmark.github.io</a></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="horizon">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Horizon scaling in the same environment</h2>
+    <div class="content has-text-justified"><p>Each incremental task extends a shorter one by exactly one subgoal while keeping the scene, the destinations and the task category fixed. Below: one scene family per suite at a short, a medium and a long horizon (successful episodes).</p></div>
+    <div class="columns is-multiline is-centered">
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_harness_all1_plate_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_harness_all1_plate_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the carrot on the plate.” · 1 subgoal · Single destination</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_harness_all5_plate_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_harness_all5_plate_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put both carrots, both spoons and the eggplant on the plate” · 5 subgoals · Single destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_harness_all10_plate_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_harness_all10_plate_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the four carrots, the three spoons and the three eggplants on the plate” · 10 subgoals · Single destination · 4x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_harness_scene45_1goal_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_harness_scene45_1goal_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the blue bowl on the purple cloth.” · 1 subgoal · Single destination</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_harness_scene54_relay_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_harness_scene54_relay_4_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the spoon on the cloth, then put the spoon in the pot, then put the chicken drumstick on the cloth, then put the chicken drumstick in the pot” · 4 subgoals · Relay · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_harness_scene54_route_7_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_harness_scene54_route_7_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the spoon in the pot, then put the spoon on the cloth, then put the chicken drumstick in the pot, then put the chicken drumstick on the cloth, then put the corn cob in the pot, then put the corn cob on the cloth, then put the cheese on the cloth” · 7 subgoals · Relay · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_harness_comp_bin_1_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_harness_comp_bin_1_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the banana in the bin.” · 1 subgoal · Single destination</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_harness_comp_bin_6_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_harness_comp_bin_6_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the banana, the orange, the lemon, the lime, the avocado and the onion in the bin” · 6 subgoals · Single destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_harness_comp_bin_10_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_harness_comp_bin_10_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the banana, both oranges, the lemon, the lime, the avocado, the onion, the lychee, the pumpkin and the pomegranate in the bin” · 10 subgoals · Single destination · 8x speed</p>
+          </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="categories">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Eight task categories</h2>
+    <div class="content has-text-justified"><p>Single destination, split destinations, transfers, relay routing, revisitations, exclusions, ordered sequences and duplicate instances. Every subgoal is checked by a programmatic predicate on the simulator state.</p></div>
+    <div class="columns is-multiline is-centered">
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_plan_verifier_all5_plate_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_plan_verifier_all5_plate_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · Proprioceptive verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put both carrots, both spoons and the eggplant on the plate” · 5 subgoals · Single destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_harness_scene54_split_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_harness_scene54_split_3_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the spoon and the corn cob on the cloth and put the chicken drumstick in the pot” · 3 subgoals · Split destination</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_gripper_comp_transfer_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_gripper_comp_transfer_3_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Proprioceptive trigger <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“move the orange, the lemon and the lime from the plate to the bin” · 3 subgoals · Transfer · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_plan_verifier_relay5e_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_plan_verifier_relay5e_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · Proprioceptive verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the carrot on the plate, then put the carrot on the blue towel, then put the spoon on the plate, then put the spoon on the blue towel, then put the eggplant on the plate” · 5 subgoals · Relay · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_gpt_policy_scene54_revisit_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_gpt_policy_scene54_revisit_3_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · GPT-Policy <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the spoon on the cloth, then put the spoon in the pot, then put the spoon on the cloth” · 3 subgoals · Revisit · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_oracle_comp_bin_4_distractor_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_oracle_comp_bin_4_distractor_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Privileged verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put everything except the red block and the blue block in the bin” · 4 subgoals · Exclusion · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/se_gpt_policy_ordered_plate_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/se_gpt_policy_ordered_plate_3_1.jpg"></video>
+            <p class="video-title">SimplerEnv-Long · GPT-Policy <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the carrot on the plate, then put the spoon on the plate, then put the eggplant on the plate” · 3 subgoals · Ordered</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/ra_gpt_policy_scene54_duplicates_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/ra_gpt_policy_scene54_duplicates_3_1.jpg"></video>
+            <p class="video-title">RobotArena-∞-Long · GPT-Policy <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the three corn cobs on the cloth” · 3 subgoals · Duplicates · 2x speed</p>
+          </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="systems">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">One task, every system</h2>
+    <div class="content has-text-justified"><p>The same RoboLab-Long task under the low-level policy alone, the orchestrator variants, the external systems and the privileged verifier. Episodes are sampled at random from the evaluation, so failures are shown where they occurred.</p></div>
+    <div class="columns is-multiline is-centered">
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_flat_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_flat_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Low-level policy <span class="tag is-danger is-light">failure</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 7x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_periodic_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_periodic_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Periodic trigger <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_gripper_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_gripper_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Proprioceptive trigger <span class="tag is-danger is-light">failure</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 7x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_verifier_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_verifier_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Proprioceptive verifier <span class="tag is-danger is-light">failure</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 7x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_volo_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_volo_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · VoLo <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 6x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_capx_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_capx_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · CaP-X <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_tiptop_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_tiptop_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · TiPToP <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_harness_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_harness_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 4x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_gpt_policy_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_gpt_policy_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · GPT-Policy <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_oracle_comp_split_plate_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_oracle_comp_split_plate_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Privileged verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put the avocado and the banana on the plate and put the orange and the lime in the bin” · 4 subgoals · Split destination · 6x speed</p>
+          </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="contrast">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Low-level policy versus orchestration</h2>
+    <div class="content has-text-justified"><p>Given the full instruction at once, the low-level policy stalls after the first subgoals. The same policy, driven by an orchestrator with a proprioceptive verifier, completes the task.</p></div>
+    <div class="columns is-multiline is-centered">
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_flat_comp_relay_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_flat_comp_relay_3_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Low-level policy <span class="tag is-danger is-light">failure</span></p>
+            <p class="video-caption">“first put the lemon on the plate, then put the lemon in the bin, then put the lime on the plate, then put the lime in the bin, then put the banana on the plate, then put the banana in the bin” · 6 subgoals · Relay · 7x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_verifier_comp_relay_3_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_verifier_comp_relay_3_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Proprioceptive verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the lemon on the plate, then put the lemon in the bin, then put the lime on the plate, then put the lime in the bin, then put the banana on the plate, then put the banana in the bin” · 6 subgoals · Relay · 5x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_flat_comp_ordered_bin_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_flat_comp_ordered_bin_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Low-level policy <span class="tag is-danger is-light">failure</span></p>
+            <p class="video-caption">“first put the orange in the bin, then put the lemon in the bin, then put the lime in the bin, then put the banana in the bin” · 4 subgoals · Ordered · 7x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/rl_plan_verifier_comp_ordered_bin_4_1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/rl_plan_verifier_comp_ordered_bin_4_1.jpg"></video>
+            <p class="video-title">RoboLab-Long · Proprioceptive verifier <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the orange in the bin, then put the lemon in the bin, then put the lime in the bin, then put the banana in the bin” · 4 subgoals · Ordered · 3x speed</p>
+          </div>
+    </div>
+  </div>
+</section>
+<section class="section" id="real">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Real-world rollouts</h2>
+    <div class="content has-text-justified"><p>Long-horizon tasks on physical WidowX and Franka robots, run with PSP-Agent.</p></div>
+    <div class="columns is-multiline is-centered">
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_widowx_harness_r1.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_widowx_harness_r1.jpg"></video>
+            <p class="video-title">Real WidowX · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put both the eggplant and the cup on the cloth and put the carrot in the pot” · 3 subgoals · Split destination · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_widowx_harness_r2.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_widowx_harness_r2.jpg"></video>
+            <p class="video-title">Real WidowX · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put everything except the eggplant in the pot” · 2 subgoals · Exclusion · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_widowx_harness_r3.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_widowx_harness_r3.jpg"></video>
+            <p class="video-title">Real WidowX · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“first put the carrot on the cloth, then put the eggplant on the cloth” · 2 subgoals · Ordered · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_widowx_harness_r4.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_widowx_harness_r4.jpg"></video>
+            <p class="video-title">Real WidowX · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“put everything in the pot” · 3 subgoals · Single destination · 2x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_franka_harness_r5.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_franka_harness_r5.jpg"></video>
+            <p class="video-title">Real Franka · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“First put the blue cup on the plate, then put the blue cup in the bowl, then put the banana on the plate, then put the banana in the bowl” · 4 subgoals · Relay · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_franka_harness_r6.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_franka_harness_r6.jpg"></video>
+            <p class="video-title">Real Franka · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“Put the carrot and the blue cup in the bowl and put the eggplant on the plate” · 3 subgoals · Split destination · 3x speed</p>
+          </div>
+          <div class="column is-one-third">
+            <video class="rollout" src="static/videos/real_franka_harness_r7.mp4" muted loop playsinline controls preload="none"
+                   poster="static/videos/real_franka_harness_r7.jpg"></video>
+            <p class="video-title">Real Franka · PSP-Agent <span class="tag is-success is-light">success</span></p>
+            <p class="video-caption">“First put the blue cup in the bowl, then put the carrot in the bowl, then put the eggplant in the bowl” · 3 subgoals · Ordered · 3x speed</p>
+          </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Performance scaling across task horizon</h2>
+    <img class="figure" src="static/images/length_ladder.png" alt="Performance scaling across task horizon">
+    <div class="content has-text-justified"><p>Task success rate (top) and subgoal progress (bottom) as the horizon increases from 1 to 10 subgoals across all three benchmark suites (all ten systems: Tables&nbsp;11 and&nbsp;13).</p></div>
+  </div>
+</section>
+<section class="section" id="efficiency">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Robot time and compute</h2>
+    <img class="figure" src="static/images/efficiency.png" alt="Robot time and compute">
+    <div class="content has-text-justified"><p>(a) Share of all subgoals completed as the simulated time budget elapses. (b) Task success against VLM calls per episode. Both combine all suites (per suite: Table&nbsp;15; tokens and API cost: Appendix&nbsp;G).</p></div>
+  </div>
+</section>
+<section class="section" id="failures">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Why subgoals fail</h2>
+    <img class="figure" src="static/images/failure_horizon.png" alt="Why subgoals fail">
+    <div class="content has-text-justified"><p>Share of subgoals not completed at the end of the episode, by cause (Appendix&nbsp;H). A loss that an orchestrator decision made final is drawn as an orchestrator cause (grey; CaP-X and GPT-Policy log no decisions), every other loss by what happened to the object. (a) One bar per system, over all its episodes. (b) One point per task length, over all ten systems. Every value is computed within each suite and then averaged over the three suites (per suite: Figure&nbsp;8).</p></div>
+  </div>
+</section>
+<section class="section" id="real-results">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Real-robot evaluation</h2>
+    <img class="figure" src="static/images/real_robot_rank.png" alt="Real-robot evaluation">
+    <div class="content has-text-justified"><p>Left: task success (%) on the real robots per task category, 12 episodes per task and system. Right: overall task success in simulation (Table&nbsp;3) and on the real robots. Both rank the three systems the same.</p></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>This page is anonymized for double-blind review. It loads no third-party resources and
+          uses no analytics or tracking.</p>
+          <p>Website template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
+          licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
